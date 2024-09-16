@@ -1,0 +1,53 @@
+backend/
+├── app.py                # Archivo principal para ejecutar Flask
+├── config.py             # Archivo de configuración para el entorno
+├── requirements.txt      # Dependencias del proyecto
+├── venv/                 # Entorno virtual
+├── modulo_diccionario/   # Módulo 1: Diccionario de Datos
+│   ├── __init__.py
+│   ├── models.py         # Definiciones de modelos
+│   ├── views.py          # Lógica de las rutas y controladores
+│   ├── services.py       # Servicios adicionales (lógica de negocio)
+│   ├── serializers.py    # Transformar datos entre Python y JSON
+│   └── utils.py          # Funciones de utilidad
+├── modulo_ddl_dml/       # Módulo 2: DDL y DML
+│   ├── __init__.py
+│   ├── models.py         # Definiciones de modelos
+│   ├── views.py          # Lógica de las rutas y controladores
+│   ├── services.py       # Servicios adicionales (lógica de negocio)
+│   ├── serializers.py    # Transformar datos entre Python y JSON
+│   └── utils.py          # Funciones de utilidad
+
+Explicación de cada archivo:
+
+app.py: El archivo principal para correr la aplicación Flask. Aquí se importa Flask y se configuran los módulos.
+
+config.py: Contendrá las configuraciones de Flask, como la base de datos y configuraciones del entorno.
+
+requirements.txt: Archivo que lista las dependencias necesarias para que el proyecto funcione (Flask, SQLAlchemy, etc.).
+
+venv/: El entorno virtual donde se instalan las dependencias.
+
+Módulo Diccionario de Datos (modulo_diccionario):
+
+models.py: Aquí se definen las estructuras de datos y cómo se almacenan en la base de datos. Utiliza SQLAlchemy para definir las tablas del diccionario de datos.
+
+views.py: Contiene las rutas y controladores para gestionar el acceso a la información del diccionario de datos.
+
+services.py: Contendrá la lógica de negocio específica de este módulo, como la creación, actualización y eliminación de entradas del diccionario.
+
+serializers.py: Se usa para transformar datos entre el formato JSON y los modelos de Python.
+
+utils.py: Funciones auxiliares que son reutilizables en este módulo, como validaciones.
+
+Módulo DDL y DML (modulo_ddl_dml):
+
+models.py: Aquí se definirán las tablas necesarias para el módulo DDL y DML, como logs de operaciones y estructuras de comandos SQL.
+
+views.py: Las rutas para ejecutar consultas DDL y DML, y ver los resultados.
+
+services.py: Lógica para manejar las operaciones DDL (definir/alterar estructuras) y DML (consultas y manipulación de datos).
+
+serializers.py: Para formatear los resultados de las operaciones DDL y DML, y transformarlos en JSON si es necesario.
+
+utils.py: Funciones útiles para este módulo, como la validación de sintaxis SQL.
