@@ -1,10 +1,15 @@
-backend/
+MODULOS/
 ├── app.py                # Archivo principal para ejecutar Flask
 ├── config.py             # Archivo de configuración para el entorno
 ├── requirements.txt      # Dependencias del proyecto
-├── venv/                 # Entorno virtual
+├── venv/
+├── init_db.py
+├── __pycache__
+├── instance/
+│   ├── diccionario.db                  
 ├── modulo_diccionario/   # Módulo 1: Diccionario de Datos
 │   ├── __init__.py
+│   ├── __pycache__
 │   ├── models.py         # Definiciones de modelos
 │   ├── views.py          # Lógica de las rutas y controladores
 │   ├── services.py       # Servicios adicionales (lógica de negocio)
