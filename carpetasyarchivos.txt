@@ -6,7 +6,7 @@ MODULOS/
 ├── init_db.py
 ├── __pycache__
 ├── instance/
-│   ├── diccionario.db                  
+│   ├── diccionario.json                  
 ├── modulo_diccionario/   # Módulo 1: Diccionario de Datos
 │   ├── __init__.py
 │   ├── __pycache__
@@ -21,6 +21,7 @@ MODULOS/
 │   ├── views.py          # Lógica de las rutas y controladores
 │   ├── services.py       # Servicios adicionales (lógica de negocio)
 │   ├── serializers.py    # Transformar datos entre Python y JSON
+│   ├── data.json    # Transformar datos entre Python y JSON
 │   └── utils.py          # Funciones de utilidad
 
 Explicación de cada archivo:

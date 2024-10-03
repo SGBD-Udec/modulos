@@ -1,46 +1,17 @@
 from flask import Flask
-from config import Config
-from modulo_diccionario.models import db  # Asegúrate de que esta es la única importación de db
-from modulo_diccionario.views import blueprint as diccionario_blueprint
-from modulo_ddl_dml.views import blueprint as dml_blueprint  # Asegúrate de tener esto
+from modulo_diccionario.views import modulo_diccionario
+from modulo_diccionario.services import agregar_ejemplo
+from modulo_ddl_dml.views import modulo_ddl_dml  # Asegúrate de que este sea el nombre correcto del Blueprint
 
-def create_app():
-    app = Flask(__name__)
-    app.config.from_object(Config)
-    
-    db.init_app(app)  # Aquí inicializas db
+app = Flask(__name__)
 
-    app.register_blueprint(diccionario_blueprint)
-    app.register_blueprint(dml_blueprint)
+# Registra los Blueprints
+app.register_blueprint(modulo_diccionario)
+app.register_blueprint(modulo_ddl_dml)
 
-    with app.app_context():
-        db.create_all()  # Crea las tablas aquí
 
-    return app
+agregar_ejemplo("Ejemplo 1", "Descripción del ejemplo 1")  # Este ejemplo se agregará al inicio
+
 
 if __name__ == '__main__':
-    app = create_app()
-    app.run(debug=True)
-from flask import Flask
-from config import Config
-from modulo_diccionario.models import db  # Asegúrate de que esta es la única importación de db
-from modulo_diccionario.views import blueprint as diccionario_blueprint
-from modulo_ddl_dml.views import blueprint as dml_blueprint  # Asegúrate de tener esto
-
-def create_app():
-    app = Flask(__name__)
-    app.config.from_object(Config)
-    
-    db.init_app(app)  # Aquí inicializas db
-
-    app.register_blueprint(diccionario_blueprint)
-    app.register_blueprint(dml_blueprint)
-
-    with app.app_context():
-        db.create_all()  # Crea las tablas aquí
-
-    return app
-
-if __name__ == '__main__':
-    app = create_app()
     app.run(debug=True)

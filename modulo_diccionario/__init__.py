@@ -1,9 +1,5 @@
 from flask import Blueprint
-from flask_sqlalchemy import SQLAlchemy
-
-# Crear la instancia de SQLAlchemy
-db = SQLAlchemy()
-
+from .views import modulo_diccionario
 # Crear el Blueprint
 modulo_diccionario = Blueprint('modulo_diccionario', __name__)
 

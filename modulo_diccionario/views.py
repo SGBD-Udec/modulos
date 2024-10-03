@@ -1,10 +1,15 @@
-from flask import Blueprint, render_template
-from .models import Diccionario
+from flask import Blueprint, jsonify
+from .services import obtener_ejemplos, agregar_ejemplo
 
-blueprint = Blueprint('diccionario', __name__)
+modulo_diccionario = Blueprint('modulo_diccionario', __name__)
 
-@blueprint.route('/')
-def mostrar_diccionario():
-    palabras = Diccionario.query.all()  # Esto debería funcionar si la conexión está bien
-    print(f'Palabras obtenidas: {palabras}')  # Imprime los resultados en la consola
-    return render_template('diccionario.html', palabras=palabras)
+@modulo_diccionario.route('/ejemplos', methods=['GET'])
+def get_ejemplos():
+    ejemplos = obtener_ejemplos()
+    return jsonify(ejemplos)
+
+@modulo_diccionario.route('/ejemplos/agregar', methods=['POST'])
+def post_ejemplo():
+    # Aquí deberías manejar la adición de un nuevo ejemplo desde el request
+    agregar_ejemplo("Ejemplo desde API", "Descripción desde API")
+    return jsonify({"message": "Ejemplo agregado."}), 201

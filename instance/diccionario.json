@@ -1,0 +1,15 @@
+{
+    "tablas": {},
+    "ejemplos": [
+        {
+            "id": 1,
+            "nombre": "Ejemplo 1",
+            "descripcion": "Descripci\u00f3n del ejemplo 1"
+        },
+        {
+            "id": 2,
+            "nombre": "Ejemplo 1",
+            "descripcion": "Descripci\u00f3n del ejemplo 1"
+        }
+    ]
+}
