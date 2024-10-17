@@ -37,8 +37,12 @@ def obtener_ejemplos():
     """Devuelve la lista de ejemplos."""
     return cargar_datos_json()["ejemplos"]
 
+# models.py
 def eliminar_ejemplo(ejemplo_id):
-    """Elimina un ejemplo por ID."""
+    """Elimina un ejemplo por ID desde el modelo."""    
     data = cargar_datos_json()
+    # Puedes también imprimir aquí si lo deseas
     data["ejemplos"] = [e for e in data["ejemplos"] if e['id'] != ejemplo_id]
     guardar_datos_json(data)
+    # Devuelve True si se eliminó un ejemplo
+    return len(data["ejemplos"]) < len(data["ejemplos"])  # Aquí puedes verificar el cambio
