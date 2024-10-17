@@ -7,6 +7,9 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+# Ignorar __pycache__ en los módulos
+modulo_diccionario/__pycache__/
+modulo_ddl_dml/__pycache__/
 
 # Archivos de logs
 *.log
