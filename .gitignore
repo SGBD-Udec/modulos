@@ -1,0 +1,24 @@
+# Entornos virtuales
+venv/
+.env
+
+# Archivos compilados de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Archivos de logs
+*.log
+
+# Archivos de bases de datos locales
+*.sqlite3
+*.db
+
+# Archivos de configuraciones específicas del entorno
+*.env
+
+# Otros archivos temporales
+*.tmp
+*.bak
+.DS_Store
