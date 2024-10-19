@@ -1,67 +1,144 @@
+import re
 import json
-import os
+from flask import request, jsonify
+from flask import current_app as app
 
 # Ruta del archivo JSON
-JSON_FILE_PATH = os.path.join('modulo_ddl_dml', 'data.json')
+DATABASE_FILE = 'instance/diccionario.json'
 
-def cargar_datos_json():
-    """Carga datos desde el archivo JSON o inicializa una estructura vacía."""
-    print("Cargando datos JSON...")  # Mensaje de depuración
-    if not os.path.exists(JSON_FILE_PATH):
-        inicializar_archivo_json()
+# Función para leer el archivo JSON
+def load_data():
+    with open(DATABASE_FILE, 'r') as file:
+        return json.load(file)
+
+# Función para guardar datos en el archivo JSON
+def save_data(data):
+    with open(DATABASE_FILE, 'w') as file:
+        json.dump(data, file, indent=4)
+
+def parse_command(command):
+    # Expresiones regulares para comandos
+    pattern_single_update = r"UPDATE (\w+) SET (\w+) = '(\w+)' WHERE (\w+) = '(\w+)';"
+    pattern_multiple_update = r"UPDATE (\w+) SET ((?:\w+ = '\w+', )*\w+ = '\w+') WHERE (\w+) = '(\w+)';"
+    pattern_multiple_records_update = r"UPDATE (\w+) SET (\w+) = '(\w+)' WHERE (\w+) IN \((\w+(?:, \w+)*)\);"
+    pattern_single_delete = r"DELETE FROM (\w+) WHERE (\w+) = '(\w+)';"
+    pattern_multiple_records_delete = r"DELETE FROM (\w+) WHERE (\w+) IN \((\w+(?:, \w+)*)\);"
+
+    # Actualizar un solo campo
+    if re.match(pattern_single_update, command):
+        match = re.match(pattern_single_update, command)
+        table = match.group(1)
+        field = match.group(2)
+        new_value = match.group(3)
+        condition_field = match.group(4)
+        condition_value = match.group(5)
+        return {
+            'type': 'update',
+            'table': table,
+            'fields': {field: new_value},
+            'condition_field': condition_field,
+            'condition_value': condition_value,
+            'multiple_fields': False,
+            'multiple_records': False
+        }
+
+    # Actualizar múltiples campos
+    elif re.match(pattern_multiple_update, command):
+        match = re.match(pattern_multiple_update, command)
+        table = match.group(1)
+        fields_str = match.group(2)
+        fields = dict(re.findall(r"(\w+) = '(\w+)'", fields_str))
+        condition_field = match.group(3)
+        condition_value = match.group(4)
+        return {
+            'type': 'update',
+            'table': table,
+            'fields': fields,
+            'condition_field': condition_field,
+            'condition_value': condition_value,
+            'multiple_fields': True,
+            'multiple_records': False
+        }
+
+    # Actualizar múltiples registros
+    elif re.match(pattern_multiple_records_update, command):
+        match = re.match(pattern_multiple_records_update, command)
+        table = match.group(1)
+        field = match.group(2)
+        new_value = match.group(3)
+        condition_field = match.group(4)
+        condition_values = match.group(5).split(', ')
+        return {
+            'type': 'update',
+            'table': table,
+            'fields': {field: new_value},
+            'condition_field': condition_field,
+            'condition_value': condition_values,
+            'multiple_fields': False,
+            'multiple_records': True
+        }
+
+    # Eliminar un solo registro
+    elif re.match(pattern_single_delete, command):
+        match = re.match(pattern_single_delete, command)
+        table = match.group(1)
+        condition_field = match.group(2)
+        condition_value = match.group(3)
+        return {
+            'type': 'delete',
+            'table': table,
+            'condition_field': condition_field,
+            'condition_value': condition_value,
+            'multiple_records': False
+        }
+
+    # Eliminar múltiples registros
+    elif re.match(pattern_multiple_records_delete, command):
+        match = re.match(pattern_multiple_records_delete, command)
+        table = match.group(1)
+        condition_field = match.group(2)
+        condition_values = match.group(3).split(', ')
+        return {
+            'type': 'delete',
+            'table': table,
+            'condition_field': condition_field,
+            'condition_value': condition_values,
+            'multiple_records': True
+        }
+
+    return None
+
+# Ruta para ejecutar comandos desde el front-end
+@app.route('/execute_command', methods=['POST'])
+def execute_command():
+    data = request.json
+    command = data.get('command')
+
+    if not command:
+        return jsonify({'error': 'Comando no proporcionado'}), 400
+
+    parsed_data = parse_command(command)
     
-    with open(JSON_FILE_PATH, 'r') as file:
-        data = json.load(file)
-        print(data)  # Imprime los datos cargados para depuración
-        return data
+    if not parsed_data:
+        return jsonify({'error': 'Comando no válido'}), 400
 
-def inicializar_archivo_json():
-    """Inicializa el archivo JSON con la estructura básica."""
-    if not os.path.exists('modulo_ddl_dml'):
-        os.makedirs('modulo_ddl_dml')  # Asegúrate de que el directorio exista
-        print("Directorio 'modulo_ddl_dml' creado.")
+    # Leer y actualizar la base de datos (diccionario.json)
+    database = load_data()
+
+    if parsed_data['type'] == 'update':
+        table = parsed_data['table']
+        fields = parsed_data['fields']
+        condition_field = parsed_data['condition_field']
+        condition_value = parsed_data['condition_value']
+
+        # Actualizar el campo deseado en la tabla
+        for record in database.get(table, []):
+            if record.get(condition_field) == condition_value:
+                record.update(fields)
+
+        # Guardar los cambios en el archivo JSON
+        save_data(database)
+
+        return jsonify({'message': 'Comando ejecutado correctamente'}), 200
     
-    data_inicial = {"tablas": {}}
-    with open(JSON_FILE_PATH, 'w') as file:
-        json.dump(data_inicial, file, indent=4)
-    print(f"Archivo {JSON_FILE_PATH} creado y inicializado.")  # Mensaje de confirmación
-
-def guardar_datos_json(data):
-    """Guarda datos en el archivo JSON."""
-    try:
-        with open(JSON_FILE_PATH, 'w') as file:
-            json.dump(data, file, indent=4)
-    except IOError as e:
-        print(f"Error al guardar datos: {e}")
-
-# Funciones para manejar tablas
-def agregar_tabla(nombre_tabla, columnas):
-    """Agrega una nueva tabla al archivo JSON."""
-    if not nombre_tabla or not columnas:
-        raise ValueError("El nombre de la tabla y las columnas no pueden estar vacíos.")
-    
-    data = cargar_datos_json()
-    
-    # Verificar si la tabla ya existe
-    if nombre_tabla in data["tablas"]:
-        raise ValueError("La tabla ya existe.")
-    
-    nueva_tabla = {
-        "columnas": columnas
-    }
-    data["tablas"][nombre_tabla] = nueva_tabla
-    guardar_datos_json(data)
-
-def buscar_tabla(nombre_tabla):
-    """Busca una tabla por nombre y retorna sus datos, o None si no existe."""
-    data = cargar_datos_json()
-    return data.get('tablas', {}).get(nombre_tabla, None)
-
-def eliminar_tabla(nombre_tabla):
-    """Elimina una tabla por nombre. Retorna True si se eliminó, o False si no existe."""
-    data = cargar_datos_json()  # Cargar datos de tu fuente de datos (JSON, base de datos, etc.)
-    if nombre_tabla in data.get('tablas', {}):
-        del data['tablas'][nombre_tabla]  # Eliminar la tabla
-        guardar_datos_json(data)  # Guarda los cambios en tu fuente de datos
-        return True
-    return False
+    return jsonify({'error': 'Error al procesar el comando'}), 400

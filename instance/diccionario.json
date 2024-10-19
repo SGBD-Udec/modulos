@@ -9,11 +9,5 @@
             "numero_columnas": 2
         }
     },
-    "ejemplos_tablas": [
-        {
-            "id": 1,
-            "nombre": "Daniel chupon ",
-            "descripcion": "Daniel mamon "
-        }
-    ]
+    "ejemplos_tablas": []
 }
