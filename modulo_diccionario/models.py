@@ -62,3 +62,4 @@ def agregar_relacion(tabla_origen, columna_origen, tabla_destino, columna_destin
 def obtener_relaciones():
     """Devuelve la lista de relaciones entre tablas."""
     return cargar_datos_json()["relaciones"]
+
