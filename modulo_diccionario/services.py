@@ -1,44 +1,31 @@
-import json
-import os
+# servicios.py
+from .models import cargar_datos_json, guardar_datos_json, agregar_tabla, obtener_tablas, eliminar_tabla, agregar_relacion, obtener_relaciones
 
-# Ruta del archivo JSON
-JSON_FILE_PATH = 'instance/diccionario.json'
+# Servicio para agregar una tabla con columnas
+def servicio_agregar_tabla(nombre, descripcion, columnas):
+    if verificar_nombre_tabla_existente(nombre):  # Asegúrate de tener esta función
+        return False  # Nombre ya existe, no se puede agregar
+    agregar_tabla(nombre, descripcion, columnas)
+    return True  # Se agregó con éxito
 
-def cargar_datos():
-    """Carga datos desde el archivo JSON o retorna estructuras vacías."""
-    if not os.path.exists(JSON_FILE_PATH):
-        return {"tablas": {}, "ejemplos": []}
-    
-    with open(JSON_FILE_PATH, 'r') as file:
-        return json.load(file)
+def verificar_nombre_tabla_existente(nombre):
+    tablas = obtener_tablas()  # Esta función debe devolver todas las tablas
+    return any(tabla['nombre'] == nombre for tabla in tablas)  # Compara el nombre
 
-def guardar_datos(data):
-    """Guarda datos en el archivo JSON."""
-    try:
-        with open(JSON_FILE_PATH, 'w') as file:
-            json.dump(data, file, indent=4)
-    except IOError as e:
-        print(f"Error al guardar datos: {e}")
 
-# Funciones para manejar ejemplos
-def agregar_ejemplo(nombre, descripcion):
-    """Agrega un nuevo ejemplo al archivo JSON."""
-    data = cargar_datos()
-    nuevo_id = len(data["ejemplos"]) + 1  # Generar un nuevo ID
-    nuevo_ejemplo = {
-        'id': nuevo_id,
-        'nombre': nombre,
-        'descripcion': descripcion
-    }
-    data["ejemplos"].append(nuevo_ejemplo)
-    guardar_datos(data)
+# Servicio para obtener todas las tablas
+def servicio_obtener_tablas():
+    return obtener_tablas()
 
-def obtener_ejemplos():
-    """Devuelve la lista de ejemplos."""
-    return cargar_datos()["ejemplos"]
+# Servicio para eliminar una tabla
+def servicio_eliminar_tabla(tabla_id):
+    return eliminar_tabla(tabla_id)
 
-def eliminar_ejemplo(ejemplo_id):
-    """Elimina un ejemplo por ID."""
-    data = cargar_datos()
-    data["ejemplos"] = [e for e in data["ejemplos"] if e['id'] != ejemplo_id]
-    guardar_datos(data)
+# Servicio para agregar una relación entre tablas
+def servicio_agregar_relacion(tabla_origen, columna_origen, tabla_destino, columna_destino, tipo_relacion):
+    agregar_relacion(tabla_origen, columna_origen, tabla_destino, columna_destino, tipo_relacion)
+
+# Servicio para obtener todas las relaciones
+def servicio_obtener_relaciones():
+    return obtener_relaciones()
+
