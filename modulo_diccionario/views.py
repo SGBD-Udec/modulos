@@ -4,7 +4,9 @@ import json
 from flask import Blueprint, jsonify, request
 from .services import servicio_agregar_tabla, servicio_obtener_tablas, servicio_eliminar_tabla, servicio_agregar_relacion, servicio_obtener_relaciones, verificar_nombre_tabla_existente
 
-modulo_diccionario = Blueprint('modulo_diccionario', _name_)
+
+modulo_diccionario = Blueprint('modulo_diccionario', __name__)
+
 
 @modulo_diccionario.route('/tablas', methods=['GET'])
 def get_tablas():
@@ -47,4 +49,6 @@ def post_relacion():
         data.get("columna_destino"),
         data.get("tipo_relacion")
     )
+
     return jsonify({"message": "Relación agregada con éxito."}), 201
+

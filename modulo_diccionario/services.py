@@ -28,3 +28,4 @@ def servicio_agregar_relacion(tabla_origen, columna_origen, tabla_destino, colum
 # Servicio para obtener todas las relaciones
 def servicio_obtener_relaciones():
     return obtener_relaciones()
+
