@@ -1,40 +1,50 @@
 # modulo_diccionario/views.py
 import os
 import json
-from flask import Blueprint, jsonify, request, current_app
-from .services import obtener_ejemplos_tablas, agregar_ejemplo_tabla, eliminar_ejemplo_tabla  # Asegúrate de importar las funciones adecuadas
+from flask import Blueprint, jsonify, request
+from .services import servicio_agregar_tabla, servicio_obtener_tablas, servicio_eliminar_tabla, servicio_agregar_relacion, servicio_obtener_relaciones, verificar_nombre_tabla_existente
 
-modulo_diccionario = Blueprint('modulo_diccionario', __name__)
+modulo_diccionario = Blueprint('modulo_diccionario', _name_)
 
-def obtener_datos_json():
-    """Función para obtener los datos del archivo diccionario.json."""
-    try:
-        with open(os.path.join(current_app.instance_path, 'diccionario.json'), 'r') as file:
-            data = json.load(file)
-        return data
-    except Exception as e:
-        print(f"Error al leer el archivo JSON: {e}")
-        return []
+@modulo_diccionario.route('/tablas', methods=['GET'])
+def get_tablas():
+    tablas = servicio_obtener_tablas()
+    return jsonify(tablas)
 
-@modulo_diccionario.route('/ejemplos', methods=['GET'])
-def get_ejemplos():
-    ejemplos_tablas = obtener_ejemplos_tablas()
-    return jsonify(ejemplos_tablas)
-
-@modulo_diccionario.route('/ejemplos/agregar', methods=['POST'])
-def post_ejemplo():
+@modulo_diccionario.route('/tablas/agregar', methods=['POST'])
+def post_tabla():
     data = request.json
-    agregar_ejemplo_tabla(data.get("nombre"), data.get("descripcion"))
-    return jsonify({"message": "Ejemplo agregado."}), 201
+    nombre = data.get("nombre")
+    descripcion = data.get("descripcion")
+    columnas = data.get("columnas", [])
 
-@modulo_diccionario.route('/ejemplos/<int:ejemplo_id>', methods=['DELETE'])
-def eliminar_ejemplo_view(ejemplo_id):
-    print(f"Intentando eliminar el ejemplo con ID: {ejemplo_id}")
-    if eliminar_ejemplo_tabla(ejemplo_id):  # Llama a la función de servicio
-        return jsonify({"message": f"Ejemplo con ID {ejemplo_id} eliminado."}), 204
-    else:
-        print(f"Ejemplo no encontrado para ID: {ejemplo_id}")
-        return jsonify({"message": "Ejemplo no encontrado."}), 404
+    # Aquí deberías tener una función que verifica si el nombre ya existe
+    if verificar_nombre_tabla_existente(nombre):  # Necesitas implementar esto
+        return jsonify({"error": "Ya existe una tabla con ese nombre."}), 400
 
+    # Si todo está bien, agrega la tabla
+    servicio_agregar_tabla(nombre, descripcion, columnas)
+    return jsonify({"message": "Tabla agregada con éxito."}), 201
 
+@modulo_diccionario.route('/tablas/<int:tabla_id>', methods=['DELETE'])
+def delete_tabla(tabla_id):
+    if servicio_eliminar_tabla(tabla_id):
+        return jsonify({"message": "Tabla eliminada con éxito."}), 204
+    return jsonify({"message": "Tabla no encontrada."}), 404
 
+@modulo_diccionario.route('/relaciones', methods=['GET'])
+def get_relaciones():
+    relaciones = servicio_obtener_relaciones()
+    return jsonify(relaciones)
+
+@modulo_diccionario.route('/relaciones/agregar', methods=['POST'])
+def post_relacion():
+    data = request.json
+    servicio_agregar_relacion(
+        data.get("tabla_origen"),
+        data.get("columna_origen"),
+        data.get("tabla_destino"),
+        data.get("columna_destino"),
+        data.get("tipo_relacion")
+    )
+    return jsonify({"message": "Relación agregada con éxito."}), 201
