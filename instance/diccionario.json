@@ -1,20 +1,5 @@
 {
-    "ejemplos_tablas": [
-        {
-            "id": 1,
-            "nombre": "nuevo",
-            "descripcion": "chanfle",
-            "columnas": [
-                {
-                    "nombre": "nuevo",
-                    "tipo": "DECIMAL",
-                    "restricciones": [
-                        "DEFAULT"
-                    ]
-                }
-            ]
-        }
-    ],
+    "ejemplos_tablas": [],
     "relaciones": [
         {
             "tabla_origen": "usuarios",

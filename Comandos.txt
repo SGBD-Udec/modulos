@@ -1,3 +1,6 @@
 Borar carpeta"venv"
 python -m venv venv   Crear entorno py 
 .\venv\Scripts\activate   ejecutar el entorno py 
+pip install -r requirements.txt
+pip install flask-cors
+npm install axios  
