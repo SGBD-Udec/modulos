@@ -1,19 +1,34 @@
 {
-    "tablas": {
-        "nueva_tabla": {
-            "descripcion": "Esta es una tabla de ejemplo que contiene dos columnas.",
-            "numero_columnas": 2
-        },
-        "test_table": {
-            "descripcion": "Esta tabla es una prueba con dos columnas.",
-            "numero_columnas": 2
-        }
-    },
     "ejemplos_tablas": [
         {
             "id": 1,
-            "nombre": "Daniel chupon ",
-            "descripcion": "Daniel mamon "
+            "nombre": "nuevo",
+            "descripcion": "chanfle",
+            "columnas": [
+                {
+                    "nombre": "nuevo",
+                    "tipo": "DECIMAL",
+                    "restricciones": [
+                        "DEFAULT"
+                    ]
+                }
+            ]
+        }
+    ],
+    "relaciones": [
+        {
+            "tabla_origen": "usuarios",
+            "columna_origen": "id",
+            "tabla_destino": "ordenes",
+            "columna_destino": "id_usuario",
+            "tipo_relacion": "uno-a-muchos"
+        },
+        {
+            "tabla_origen": "usuarios",
+            "columna_origen": "id",
+            "tabla_destino": "pedidos",
+            "columna_destino": "usuario_id",
+            "tipo_relacion": "uno a muchos"
         }
     ]
 }
