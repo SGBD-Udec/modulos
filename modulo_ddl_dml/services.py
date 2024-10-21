@@ -1,5 +1,5 @@
 #modulo_ddl_dml/services.py
-from .models import buscar_tabla, insertar_registro, actualizar_registro, eliminar_registro, agregar_relacion, obtener_relaciones, eliminar_relacion
+from .models import buscar_tabla, insertar_registro, actualizar_registro, eliminar_registro, agregar_relacion, obtener_relaciones, eliminar_relacion,modificar_tabla, verificar_nombre_tabla_existente
 
 # Función para insertar un nuevo registro en una tabla
 def agregar_registro(nombre_tabla, registro):
@@ -32,3 +32,10 @@ def listar_relaciones():
 def borrar_relacion(tabla_origen, tabla_destino):
     """Elimina una relación entre tablas."""
     eliminar_relacion(tabla_origen, tabla_destino)
+
+def servicio_modificar_tabla(nombre_tabla_actual, nuevos_datos):
+
+    try:
+        modificar_tabla(nombre_tabla_actual, nuevos_datos)
+    except ValueError as e:
+        raise ValueError(str(e))
