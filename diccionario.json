@@ -12,6 +12,26 @@
                         "DEFAULT"
                     ]
                 }
+            ],
+            "registros": []
+        },
+        {
+            "id": 2,
+            "nombre": "nueva",
+            "descripcion": "",
+            "columnas": [
+                {
+                    "nombre": "nuevo",
+                    "tipo": "VARCHAR",
+                    "restricciones": [
+                        "DEFAULT"
+                    ]
+                }
+            ],
+            "registros": [
+                {
+                    "nuevo": 10.5
+                }
             ]
         }
     ],
