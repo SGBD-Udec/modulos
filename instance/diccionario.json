@@ -2,33 +2,47 @@
     "ejemplos_tablas": [
         {
             "id": 1,
-            "nombre": "nuevo",
-            "descripcion": "chanfle",
+            "nombre": "ClientesPro",
+            "descripcion": "Nueva tabla clientes pro",
             "columnas": [
                 {
-                    "nombre": "nuevo",
-                    "tipo": "DECIMAL",
+                    "nombre": "id_clientes",
+                    "tipo": "VARCHAR",
                     "restricciones": [
-                        "DEFAULT"
+                        "PRIMARY KEY"
                     ]
+                }
+            ],
+            "registros": [
+                {
+                    "id_clientes": "123123dwada"
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "nombre": "Vendedores",
+            "descripcion": "Tabla para los vendedores",
+            "columnas": [
+                {
+                    "nombre": "id_vendedores",
+                    "tipo": "VARCHAR",
+                    "restricciones": [
+                        "PRIMARY KEY"
+                    ]
+                }
+            ],
+            "registros": [
+                {
+                    "id_vendedores": "21321314a"
                 }
             ]
         }
     ],
-    "relaciones": [
-        {
-            "tabla_origen": "usuarios",
-            "columna_origen": "id",
-            "tabla_destino": "ordenes",
-            "columna_destino": "id_usuario",
-            "tipo_relacion": "uno-a-muchos"
-        },
-        {
-            "tabla_origen": "usuarios",
-            "columna_origen": "id",
-            "tabla_destino": "pedidos",
-            "columna_destino": "usuario_id",
-            "tipo_relacion": "uno a muchos"
-        }
-    ]
+    "relaciones": [],
+    "estadisticas": {
+        "total_tablas": 2,
+        "total_dml_operations": 0,
+        "total_ddl_commands": 0
+    }
 }
