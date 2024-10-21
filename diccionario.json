@@ -28,37 +28,27 @@
                     ]
                 }
             ],
-            "registros": []
-        },
-        {
-            "id": 3,
-            "nombre": "clientes",
-            "descripcion": "chanfle",
-            "columnas": [
+            "registros": [
                 {
-                    "nombre": "clientes",
-                    "tipo": "VARCHAR",
-                    "restricciones": [
-                        "PRIMARY KEY"
-                    ]
+                    "nuevo": 10.5
                 }
             ]
-        },
-        {
-            "id": 5,
-            "nombre": "prueba",
-            "descripcion": "chanfle",
-            "columnas": [
-                {
-                    "nombre": "alo",
-                    "tipo": "VARCHAR",
-                    "restricciones": [
-                        "PRIMARY KEY"
-                    ]
-                }
-            ],
-            "registros": []
         }
     ],
-    "relaciones": []
+    "relaciones": [
+        {
+            "tabla_origen": "usuarios",
+            "columna_origen": "id",
+            "tabla_destino": "ordenes",
+            "columna_destino": "id_usuario",
+            "tipo_relacion": "uno-a-muchos"
+        },
+        {
+            "tabla_origen": "usuarios",
+            "columna_origen": "id",
+            "tabla_destino": "pedidos",
+            "columna_destino": "usuario_id",
+            "tipo_relacion": "uno a muchos"
+        }
+    ]
 }

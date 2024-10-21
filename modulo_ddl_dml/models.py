@@ -1,67 +1,121 @@
+# modulo_ddl_dml/models.py
 import json
-import os
 
 # Ruta del archivo JSON
-JSON_FILE_PATH = os.path.join('modulo_ddl_dml', 'data.json')
+DATABASE_FILE = 'instance/diccionario.json'
 
+# Función para leer el archivo JSON
 def cargar_datos_json():
-    """Carga datos desde el archivo JSON o inicializa una estructura vacía."""
-    print("Cargando datos JSON...")  # Mensaje de depuración
-    if not os.path.exists(JSON_FILE_PATH):
-        inicializar_archivo_json()
-    
-    with open(JSON_FILE_PATH, 'r') as file:
-        data = json.load(file)
-        print(data)  # Imprime los datos cargados para depuración
-        return data
+    with open(DATABASE_FILE, 'r') as file:
+        return json.load(file)
 
-def inicializar_archivo_json():
-    """Inicializa el archivo JSON con la estructura básica."""
-    if not os.path.exists('modulo_ddl_dml'):
-        os.makedirs('modulo_ddl_dml')  # Asegúrate de que el directorio exista
-        print("Directorio 'modulo_ddl_dml' creado.")
-    
-    data_inicial = {"tablas": {}}
-    with open(JSON_FILE_PATH, 'w') as file:
-        json.dump(data_inicial, file, indent=4)
-    print(f"Archivo {JSON_FILE_PATH} creado y inicializado.")  # Mensaje de confirmación
-
+# Función para guardar datos en el archivo JSON
 def guardar_datos_json(data):
-    """Guarda datos en el archivo JSON."""
     try:
-        with open(JSON_FILE_PATH, 'w') as file:
-            json.dump(data, file, indent=4)
-    except IOError as e:
-        print(f"Error al guardar datos: {e}")
+        with open(DATABASE_FILE, 'w') as f:  # Asegúrate de usar DATABASE_FILE
+            json.dump(data, f, indent=4)
+        print("Datos guardados correctamente en diccionario.json.")  # Mensaje de depuración
+    except Exception as e:
+        print("Error al guardar los datos:", e)
 
-# Funciones para manejar tablas
-def agregar_tabla(nombre_tabla, columnas):
-    """Agrega una nueva tabla al archivo JSON."""
-    if not nombre_tabla or not columnas:
-        raise ValueError("El nombre de la tabla y las columnas no pueden estar vacíos.")
-    
+# Función para buscar una tabla por nombre
+def buscar_tabla(nombre_tabla):
+    data = cargar_datos_json()
+    for tabla in data.get('ejemplos_tablas', []):
+        if tabla['nombre'] == nombre_tabla:
+            return tabla
+    return None
+
+# Función para eliminar una tabla por nombre
+def eliminar_tabla(nombre_tabla):
     data = cargar_datos_json()
     
-    # Verificar si la tabla ya existe
-    if nombre_tabla in data["tablas"]:
-        raise ValueError("La tabla ya existe.")
+    for i, tabla in enumerate(data['ejemplos_tablas']):
+        if tabla['nombre'] == nombre_tabla:
+            del data['ejemplos_tablas'][i]
+            guardar_datos_json(data)
+            return True
     
-    nueva_tabla = {
-        "columnas": columnas
-    }
-    data["tablas"][nombre_tabla] = nueva_tabla
+    return False
+
+# Función para actualizar un registro
+def actualizar_registro(nombre_tabla, campos, campo_condicion, valor_condicion):
+    data = cargar_datos_json()
+    tabla = buscar_tabla(nombre_tabla)
+
+    if tabla is None:
+        raise ValueError(f"La tabla {nombre_tabla} no existe.")
+
+    actualizados = 0
+    for registro in tabla.get('registros', []):  # Asegúrate de que 'registros' exista
+        if registro.get(campo_condicion) == valor_condicion:
+            registro.update(campos)
+            actualizados += 1
+
+    guardar_datos_json(data)
+    return actualizados
+
+# Función para eliminar un registro
+def eliminar_registro(nombre_tabla, campo_condicion, valor_condicion):
+    data = cargar_datos_json()
+    tabla = buscar_tabla(nombre_tabla)
+
+    if tabla is None:
+        raise ValueError(f"La tabla {nombre_tabla} no existe.")
+    
+    tabla['registros'] = [r for r in tabla.get('registros', []) if r.get(campo_condicion) != valor_condicion]
     guardar_datos_json(data)
 
-def buscar_tabla(nombre_tabla):
-    """Busca una tabla por nombre y retorna sus datos, o None si no existe."""
+# Función para insertar un nuevo registro en una tabla
+def insertar_registro(nombre_tabla, nuevo_registro):
     data = cargar_datos_json()
-    return data.get('tablas', {}).get(nombre_tabla, None)
+    tabla = buscar_tabla(nombre_tabla)
 
-def eliminar_tabla(nombre_tabla):
-    """Elimina una tabla por nombre. Retorna True si se eliminó, o False si no existe."""
-    data = cargar_datos_json()  # Cargar datos de tu fuente de datos (JSON, base de datos, etc.)
-    if nombre_tabla in data.get('tablas', {}):
-        del data['tablas'][nombre_tabla]  # Eliminar la tabla
-        guardar_datos_json(data)  # Guarda los cambios en tu fuente de datos
-        return True
-    return False
+    if tabla is None:
+        raise ValueError(f"La tabla {nombre_tabla} no existe.")
+
+    # Mensaje de depuración antes de la inserción
+    print("Antes de insertar:", tabla['registros'])
+
+    # Añadir el nuevo registro a la lista de registros de la tabla
+    tabla['registros'].append(nuevo_registro)
+
+    # Mensaje de depuración después de la inserción
+    print("Después de insertar:", tabla['registros'])
+
+    # Guardar los datos actualizados en el JSON
+    guardar_datos_json(data)
+
+
+# ---- Nuevas Funciones para Relaciones ---- #
+
+# Función para agregar una relación
+def agregar_relacion(tabla_origen, columna_origen, tabla_destino, columna_destino, tipo_relacion):
+    data = cargar_datos_json()
+
+    nueva_relacion = {
+        "tabla_origen": tabla_origen,
+        "columna_origen": columna_origen,
+        "tabla_destino": tabla_destino,
+        "columna_destino": columna_destino,
+        "tipo_relacion": tipo_relacion
+    }
+
+    data.setdefault("relaciones", []).append(nueva_relacion)  # Asegúrate de que 'relaciones' exista
+    guardar_datos_json(data)
+
+# Función para obtener todas las relaciones
+def obtener_relaciones():
+    data = cargar_datos_json()
+    return data.get("relaciones", [])
+
+# Función para eliminar una relación
+def eliminar_relacion(tabla_origen, tabla_destino):
+    data = cargar_datos_json()
+    relaciones = data.get("relaciones", [])
+    
+    relaciones_filtradas = [r for r in relaciones if not (r["tabla_origen"] == tabla_origen and r["tabla_destino"] == tabla_destino)]
+    
+    data["relaciones"] = relaciones_filtradas
+    guardar_datos_json(data)
+    return True

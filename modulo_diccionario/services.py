@@ -1,5 +1,5 @@
 # servicios.py
-from .models import cargar_datos_json, guardar_datos_json, agregar_tabla, obtener_tablas, eliminar_tabla, agregar_relacion, obtener_relaciones
+from .models import cargar_datos_json, guardar_datos_json, agregar_tabla, obtener_tablas, eliminar_tabla
 
 # Servicio para agregar una tabla con columnas
 def servicio_agregar_tabla(nombre, descripcion, columnas):
