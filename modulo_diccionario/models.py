@@ -7,7 +7,7 @@ JSON_FILE_PATH = os.path.join('instance', 'diccionario.json')
 def cargar_datos_json():
     """Carga datos desde el archivo JSON o retorna estructuras vacías."""
     if not os.path.exists(JSON_FILE_PATH):
-        return {"tablas": {}, "ejemplos": []}
+        return {"ejemplos_tablas": [], "relaciones": []}
     
     with open(JSON_FILE_PATH, 'r') as file:
         return json.load(file)
@@ -20,29 +20,31 @@ def guardar_datos_json(data):
     except IOError as e:
         print(f"Error al guardar datos: {e}")
 
-# Funciones para manejar ejemplos
-def agregar_ejemplo(nombre, descripcion):
-    """Agrega un nuevo ejemplo al archivo JSON."""
+# Funciones para manejar tablas
+def agregar_tabla(nombre, descripcion, columnas):
+    """Agrega una nueva tabla con sus columnas al archivo JSON."""
     data = cargar_datos_json()
-    nuevo_id = len(data["ejemplos"]) + 1  # Generar un nuevo ID
-    nuevo_ejemplo = {
+    nuevo_id = len(data["ejemplos_tablas"]) + 1  # Generar un nuevo ID
+    nueva_tabla = {
         'id': nuevo_id,
         'nombre': nombre,
-        'descripcion': descripcion
+        'descripcion': descripcion,
+        'columnas': columnas,
+        'registros': []  # Inicializar la clave 'registros' como una lista vacía
     }
-    data["ejemplos"].append(nuevo_ejemplo)
+    data["ejemplos_tablas"].append(nueva_tabla)
     guardar_datos_json(data)
 
-def obtener_ejemplos():
-    """Devuelve la lista de ejemplos."""
-    return cargar_datos_json()["ejemplos"]
+def obtener_tablas():
+    """Devuelve la lista de tablas con columnas."""
+    return cargar_datos_json()["ejemplos_tablas"]
 
-# models.py
-def eliminar_ejemplo(ejemplo_id):
-    """Elimina un ejemplo por ID desde el modelo."""    
+def eliminar_tabla(tabla_id):
+    """Elimina una tabla por ID."""    
     data = cargar_datos_json()
-    # Puedes también imprimir aquí si lo deseas
-    data["ejemplos"] = [e for e in data["ejemplos"] if e['id'] != ejemplo_id]
+    tablas_previas = len(data["ejemplos_tablas"])
+    data["ejemplos_tablas"] = [t for t in data["ejemplos_tablas"] if t['id'] != tabla_id]
     guardar_datos_json(data)
-    # Devuelve True si se eliminó un ejemplo
-    return len(data["ejemplos"]) < len(data["ejemplos"])  # Aquí puedes verificar el cambio
+    return len(data["ejemplos_tablas"]) < tablas_previas
+
+
