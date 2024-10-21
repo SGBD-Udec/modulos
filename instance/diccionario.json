@@ -2,11 +2,23 @@
     "tablas": {
         "nueva_tabla": {
             "descripcion": "Esta es una tabla de ejemplo que contiene dos columnas.",
-            "numero_columnas": 2
+            "numero_columnas": 2,
+            "columns": {
+                "columna1": "INT",
+                "columna2": "VARCHAR(50)"
+            },
+            "indexes": {}
         },
         "test_table": {
             "descripcion": "Esta tabla es una prueba con dos columnas.",
-            "numero_columnas": 2
+            "numero_columnas": 2,
+            "columns": {
+                "columna1": "INT",
+                "columna2": "VARCHAR(50)"
+            },
+            "indexes": {
+                "idx_columna1": ["columna1"]
+            }
         }
     },
     "ejemplos_tablas": []
