@@ -1,144 +1,117 @@
-import re
+# modulo_ddl_dml/models.py
 import json
-from flask import request, jsonify
-from flask import current_app as app
 
 # Ruta del archivo JSON
 DATABASE_FILE = 'instance/diccionario.json'
 
 # Función para leer el archivo JSON
-def load_data():
+def cargar_datos_json():
     with open(DATABASE_FILE, 'r') as file:
         return json.load(file)
 
 # Función para guardar datos en el archivo JSON
-def save_data(data):
-    with open(DATABASE_FILE, 'w') as file:
-        json.dump(data, file, indent=4)
 
-def parse_command(command):
-    # Expresiones regulares para comandos
-    pattern_single_update = r"UPDATE (\w+) SET (\w+) = '(\w+)' WHERE (\w+) = '(\w+)';"
-    pattern_multiple_update = r"UPDATE (\w+) SET ((?:\w+ = '\w+', )*\w+ = '\w+') WHERE (\w+) = '(\w+)';"
-    pattern_multiple_records_update = r"UPDATE (\w+) SET (\w+) = '(\w+)' WHERE (\w+) IN \((\w+(?:, \w+)*)\);"
-    pattern_single_delete = r"DELETE FROM (\w+) WHERE (\w+) = '(\w+)';"
-    pattern_multiple_records_delete = r"DELETE FROM (\w+) WHERE (\w+) IN \((\w+(?:, \w+)*)\);"
+def guardar_datos_json(data):
+    try:
+        with open('diccionario.json', 'w') as f:
+            json.dump(data, f, indent=4)
+        print("Datos guardados correctamente en diccionario.json.")
+    except Exception as e:
+        print("Error al guardar los datos:", e)
 
-    # Actualizar un solo campo
-    if re.match(pattern_single_update, command):
-        match = re.match(pattern_single_update, command)
-        table = match.group(1)
-        field = match.group(2)
-        new_value = match.group(3)
-        condition_field = match.group(4)
-        condition_value = match.group(5)
-        return {
-            'type': 'update',
-            'table': table,
-            'fields': {field: new_value},
-            'condition_field': condition_field,
-            'condition_value': condition_value,
-            'multiple_fields': False,
-            'multiple_records': False
-        }
-
-    # Actualizar múltiples campos
-    elif re.match(pattern_multiple_update, command):
-        match = re.match(pattern_multiple_update, command)
-        table = match.group(1)
-        fields_str = match.group(2)
-        fields = dict(re.findall(r"(\w+) = '(\w+)'", fields_str))
-        condition_field = match.group(3)
-        condition_value = match.group(4)
-        return {
-            'type': 'update',
-            'table': table,
-            'fields': fields,
-            'condition_field': condition_field,
-            'condition_value': condition_value,
-            'multiple_fields': True,
-            'multiple_records': False
-        }
-
-    # Actualizar múltiples registros
-    elif re.match(pattern_multiple_records_update, command):
-        match = re.match(pattern_multiple_records_update, command)
-        table = match.group(1)
-        field = match.group(2)
-        new_value = match.group(3)
-        condition_field = match.group(4)
-        condition_values = match.group(5).split(', ')
-        return {
-            'type': 'update',
-            'table': table,
-            'fields': {field: new_value},
-            'condition_field': condition_field,
-            'condition_value': condition_values,
-            'multiple_fields': False,
-            'multiple_records': True
-        }
-
-    # Eliminar un solo registro
-    elif re.match(pattern_single_delete, command):
-        match = re.match(pattern_single_delete, command)
-        table = match.group(1)
-        condition_field = match.group(2)
-        condition_value = match.group(3)
-        return {
-            'type': 'delete',
-            'table': table,
-            'condition_field': condition_field,
-            'condition_value': condition_value,
-            'multiple_records': False
-        }
-
-    # Eliminar múltiples registros
-    elif re.match(pattern_multiple_records_delete, command):
-        match = re.match(pattern_multiple_records_delete, command)
-        table = match.group(1)
-        condition_field = match.group(2)
-        condition_values = match.group(3).split(', ')
-        return {
-            'type': 'delete',
-            'table': table,
-            'condition_field': condition_field,
-            'condition_value': condition_values,
-            'multiple_records': True
-        }
-
+# Función para buscar una tabla por nombre
+def buscar_tabla(nombre_tabla):
+    data = cargar_datos_json()
+    for tabla in data.get('ejemplos_tablas', []):
+        if tabla['nombre'] == nombre_tabla:
+            return tabla
     return None
 
-# Ruta para ejecutar comandos desde el front-end
-@app.route('/execute_command', methods=['POST'])
-def execute_command():
-    data = request.json
-    command = data.get('command')
-
-    if not command:
-        return jsonify({'error': 'Comando no proporcionado'}), 400
-
-    parsed_data = parse_command(command)
+# Función para eliminar una tabla por nombre
+def eliminar_tabla(nombre_tabla):
+    data = cargar_datos_json()
     
-    if not parsed_data:
-        return jsonify({'error': 'Comando no válido'}), 400
-
-    # Leer y actualizar la base de datos (diccionario.json)
-    database = load_data()
-
-    if parsed_data['type'] == 'update':
-        table = parsed_data['table']
-        fields = parsed_data['fields']
-        condition_field = parsed_data['condition_field']
-        condition_value = parsed_data['condition_value']
-
-        # Actualizar el campo deseado en la tabla
-        for record in database.get(table, []):
-            if record.get(condition_field) == condition_value:
-                record.update(fields)
-
-        # Guardar los cambios en el archivo JSON
-        save_data(database)
-
-        return jsonify({'message': 'Comando ejecutado correctamente'}), 200
+    for i, tabla in enumerate(data['ejemplos_tablas']):
+        if tabla['nombre'] == nombre_tabla:
+            del data['ejemplos_tablas'][i]
+            guardar_datos_json(data)
+            return True
     
-    return jsonify({'error': 'Error al procesar el comando'}), 400
+    return False
+
+# Función para actualizar un registro
+def actualizar_registro(nombre_tabla, campos, campo_condicion, valor_condicion):
+    data = cargar_datos_json()
+    tabla = buscar_tabla(nombre_tabla)
+
+    if tabla is None:
+        raise ValueError(f"La tabla {nombre_tabla} no existe.")
+
+    actualizados = 0
+    for registro in tabla['registros']:
+        if registro.get(campo_condicion) == valor_condicion:
+            registro.update(campos)
+            actualizados += 1
+
+    guardar_datos_json(data)
+    return actualizados
+
+# Función para eliminar un registro
+def eliminar_registro(nombre_tabla, campo_condicion, valor_condicion):
+    data = cargar_datos_json()
+    tabla = buscar_tabla(nombre_tabla)
+
+    if tabla is None:
+        raise ValueError(f"La tabla {nombre_tabla} no existe.")
+    
+    tabla['registros'] = [r for r in tabla['registros'] if r.get(campo_condicion) != valor_condicion]
+    guardar_datos_json(data)
+
+# Función para insertar un nuevo registro en una tabla
+def insertar_registro(nombre_tabla, nuevo_registro):
+    data = cargar_datos_json()  # Carga los datos actuales
+    tabla = next((t for t in data['ejemplos_tablas'] if t['nombre'] == nombre_tabla), None)
+
+    if tabla is not None:
+        # Asegúrate de que el campo 'registros' exista
+        if 'registross' not in tabla:
+            tabla['registros'] = []
+
+        # Agrega el nuevo registro
+        tabla['registros'].append(nuevo_registro)
+        guardar_datos_json(data)  # Guarda los cambios en el JSON
+        return True
+    return False
+
+# ---- Nuevas Funciones para Relaciones ---- #
+
+# Función para agregar una relación
+def agregar_relacion(tabla_origen, columna_origen, tabla_destino, columna_destino, tipo_relacion):
+    data = cargar_datos_json()
+
+    nueva_relacion = {
+        "tabla_origen": tabla_origen,
+        "columna_origen": columna_origen,
+        "tabla_destino": tabla_destino,
+        "columna_destino": columna_destino,
+        "tipo_relacion": tipo_relacion
+    }
+
+    data["relaciones"].append(nueva_relacion)
+    guardar_datos_json(data)
+
+# Función para obtener todas las relaciones
+def obtener_relaciones():
+    data = cargar_datos_json()
+    return data.get("relaciones", [])
+
+# Función para eliminar una relación
+def eliminar_relacion(tabla_origen, tabla_destino):
+    data = cargar_datos_json()
+    relaciones = data.get("relaciones", [])
+    
+    relaciones_filtradas = [r for r in relaciones if not (r["tabla_origen"] == tabla_origen and r["tabla_destino"] == tabla_destino)]
+    
+    data["relaciones"] = relaciones_filtradas
+    guardar_datos_json(data)
+    return True

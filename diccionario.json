@@ -1,0 +1,54 @@
+{
+    "ejemplos_tablas": [
+        {
+            "id": 1,
+            "nombre": "nuevo",
+            "descripcion": "chanfle",
+            "columnas": [
+                {
+                    "nombre": "nuevo",
+                    "tipo": "DECIMAL",
+                    "restricciones": [
+                        "DEFAULT"
+                    ]
+                }
+            ],
+            "registros": []
+        },
+        {
+            "id": 2,
+            "nombre": "nueva",
+            "descripcion": "",
+            "columnas": [
+                {
+                    "nombre": "nuevo",
+                    "tipo": "VARCHAR",
+                    "restricciones": [
+                        "DEFAULT"
+                    ]
+                }
+            ],
+            "registros": [
+                {
+                    "nuevo": 10.5
+                }
+            ]
+        }
+    ],
+    "relaciones": [
+        {
+            "tabla_origen": "usuarios",
+            "columna_origen": "id",
+            "tabla_destino": "ordenes",
+            "columna_destino": "id_usuario",
+            "tipo_relacion": "uno-a-muchos"
+        },
+        {
+            "tabla_origen": "usuarios",
+            "columna_origen": "id",
+            "tabla_destino": "pedidos",
+            "columna_destino": "usuario_id",
+            "tipo_relacion": "uno a muchos"
+        }
+    ]
+}

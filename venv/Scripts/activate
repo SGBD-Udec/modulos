@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\jddur\OneDrive\Desktop\Opcion de grado\modulos\venv"
+VIRTUAL_ENV="C:\Users\jddur\OneDrive\Documentos\GitHub\modulos\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
