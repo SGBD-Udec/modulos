@@ -1,0 +1,64 @@
+{
+    "ejemplos_tablas": [
+        {
+            "id": 1,
+            "nombre": "nuevo",
+            "descripcion": "chanfle",
+            "columnas": [
+                {
+                    "nombre": "nuevo",
+                    "tipo": "DECIMAL",
+                    "restricciones": [
+                        "DEFAULT"
+                    ]
+                }
+            ],
+            "registros": []
+        },
+        {
+            "id": 2,
+            "nombre": "nueva",
+            "descripcion": "",
+            "columnas": [
+                {
+                    "nombre": "nuevo",
+                    "tipo": "VARCHAR",
+                    "restricciones": [
+                        "DEFAULT"
+                    ]
+                }
+            ],
+            "registros": []
+        },
+        {
+            "id": 3,
+            "nombre": "clientes",
+            "descripcion": "chanfle",
+            "columnas": [
+                {
+                    "nombre": "clientes",
+                    "tipo": "VARCHAR",
+                    "restricciones": [
+                        "PRIMARY KEY"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 5,
+            "nombre": "prueba",
+            "descripcion": "chanfle",
+            "columnas": [
+                {
+                    "nombre": "alo",
+                    "tipo": "VARCHAR",
+                    "restricciones": [
+                        "PRIMARY KEY"
+                    ]
+                }
+            ],
+            "registros": []
+        }
+    ],
+    "relaciones": []
+}
