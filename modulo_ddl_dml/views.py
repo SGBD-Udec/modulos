@@ -1,13 +1,15 @@
 # modulo_ddl_dml/views.py
 from flask import Blueprint, jsonify, request
-from .models import eliminar_tabla, buscar_tabla, cargar_datos_json, actualizar_registro, insertar_registro, agregar_relacion, obtener_relaciones
-from .services import (
-    agregar_registro,
-    modificar_registro,
-    borrar_registro,
-    crear_relacion,
-    listar_relaciones,
-    borrar_relacion
+from .models import (
+    eliminar_tabla, 
+    buscar_tabla, 
+    cargar_datos_json, 
+    actualizar_registro, 
+    insertar_registro, 
+    agregar_relacion, 
+    obtener_relaciones,
+    eliminar_registro,
+    eliminar_relacion
 )
 
 modulo_ddl_dml = Blueprint('modulo_ddl_dml', __name__)
@@ -18,7 +20,7 @@ modulo_ddl_dml = Blueprint('modulo_ddl_dml', __name__)
 def listar_tablas():
     """Lista todas las tablas."""
     data = cargar_datos_json()
-    return jsonify(data.get('ejemplos_tablas', {}))
+    return jsonify(data.get('ejemplos_tablas', [])), 200
 
 @modulo_ddl_dml.route('/api/dml_ddl/tablas/<string:nombre_tabla>', methods=['GET'])
 def obtener_tabla(nombre_tabla):
@@ -27,7 +29,6 @@ def obtener_tabla(nombre_tabla):
     if tabla is None:
         return jsonify({"message": "Tabla no encontrada."}), 404
     return jsonify(tabla), 200
-
 
 @modulo_ddl_dml.route('/api/dml_ddl/tablas/<string:nombre_tabla>', methods=['DELETE'])
 def eliminar_tabla_endpoint(nombre_tabla):
@@ -38,12 +39,18 @@ def eliminar_tabla_endpoint(nombre_tabla):
 
 # Rutas de DML
 @modulo_ddl_dml.route('/api/dml_ddl/tablas/<string:nombre_tabla>/insertar', methods=['POST'])
-def insertar_registro_view(nombre_tabla):  # Asegúrate de que el argumento esté aquí
-    nuevo_registro = request.get_json()  # Aquí obtienes el nuevo registro del cuerpo de la solicitud
-    if insertar_registro(nombre_tabla, nuevo_registro):  # Llama a la función de inserción correctamente
+def insertar_registro_view(nombre_tabla):
+    data = request.get_json()  # Obtén el JSON enviado
+    nuevo_registro = data.get('nuevo_registro')  # Obtén el registro del JSON
+    print("Nuevo registro recibido:", nuevo_registro)  # Mensaje de depuración
+
+    # Llamar a la función de inserción
+    try:
+        insertar_registro(nombre_tabla, nuevo_registro)
         return jsonify({"message": "Registro insertado exitosamente."}), 201
-    return jsonify({"message": "Error al insertar el registro."}), 400
-        
+    except Exception as e:
+        return jsonify({"message": str(e)}), 400
+
 @modulo_ddl_dml.route('/api/dml_ddl/tablas/<string:nombre_tabla>/actualizar', methods=['PUT'])
 def actualizar_dato(nombre_tabla):
     """Actualiza registros en una tabla."""
@@ -58,9 +65,7 @@ def actualizar_dato(nombre_tabla):
         actualizados = actualizar_registro(nombre_tabla, campos, campo_condicion, valor_condicion)
         return jsonify({"message": f"{actualizados} registro(s) actualizado(s) exitosamente."}), 200
     except Exception as e:
-        return jsonify({"message": str(e)}), 500  # Regresar el mensaje de error
-
-
+        return jsonify({"message": str(e)}), 500
 
 @modulo_ddl_dml.route('/api/dml_ddl/tablas/<string:nombre_tabla>/eliminar', methods=['DELETE'])
 def eliminar_dato(nombre_tabla):
@@ -72,17 +77,19 @@ def eliminar_dato(nombre_tabla):
         return jsonify({"message": "El campo de condición y el valor de condición son requeridos."}), 400
 
     try:
-        borrar_registro(nombre_tabla, campo_condicion, valor_condicion)
+        eliminar_registro(nombre_tabla, campo_condicion, valor_condicion)
         return jsonify({"message": "Registro(s) eliminado(s) exitosamente."}), 200
     except ValueError as e:
         return jsonify({"message": str(e)}), 400
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
 
 # Rutas para Relaciones
 
 @modulo_ddl_dml.route('/api/dml_ddl/relaciones', methods=['GET'])
-def obtener_relaciones():
+def obtener_relaciones_endpoint():
     """Obtiene todas las relaciones."""
-    relaciones = listar_relaciones()
+    relaciones = obtener_relaciones()
     return jsonify(relaciones), 200
 
 @modulo_ddl_dml.route('/api/dml_ddl/relaciones', methods=['POST'])
@@ -99,8 +106,11 @@ def agregar_nueva_relacion():
     if not all([tabla_origen, columna_origen, tabla_destino, columna_destino, tipo_relacion]):
         return jsonify({"message": "Todos los campos son requeridos."}), 400
 
-    crear_relacion(tabla_origen, columna_origen, tabla_destino, columna_destino, tipo_relacion)
-    return jsonify({"message": "Relación creada exitosamente."}), 201
+    try:
+        agregar_relacion(tabla_origen, columna_origen, tabla_destino, columna_destino, tipo_relacion)
+        return jsonify({"message": "Relación creada exitosamente."}), 201
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
 
 @modulo_ddl_dml.route('/api/dml_ddl/relaciones', methods=['DELETE'])
 def eliminar_relacion_endpoint():
@@ -112,5 +122,8 @@ def eliminar_relacion_endpoint():
     if not tabla_origen or not tabla_destino:
         return jsonify({"message": "Tabla origen y destino son requeridas."}), 400
 
-    borrar_relacion(tabla_origen, tabla_destino)
-    return jsonify({"message": "Relación eliminada exitosamente."}), 204
+    try:
+        eliminar_relacion(tabla_origen, tabla_destino)
+        return jsonify({"message": "Relación eliminada exitosamente."}), 204
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500

@@ -29,7 +29,8 @@ def agregar_tabla(nombre, descripcion, columnas):
         'id': nuevo_id,
         'nombre': nombre,
         'descripcion': descripcion,
-        'columnas': columnas
+        'columnas': columnas,
+        'registros': []  # Inicializar la clave 'registros' como una lista vacía
     }
     data["ejemplos_tablas"].append(nueva_tabla)
     guardar_datos_json(data)
@@ -46,19 +47,4 @@ def eliminar_tabla(tabla_id):
     guardar_datos_json(data)
     return len(data["ejemplos_tablas"]) < tablas_previas
 
-def agregar_relacion(tabla_origen, columna_origen, tabla_destino, columna_destino, tipo_relacion):
-    """Agrega una relación entre tablas."""
-    data = cargar_datos_json()
-    nueva_relacion = {
-        "tabla_origen": tabla_origen,
-        "columna_origen": columna_origen,
-        "tabla_destino": tabla_destino,
-        "columna_destino": columna_destino,
-        "tipo_relacion": tipo_relacion
-    }
-    data["relaciones"].append(nueva_relacion)
-    guardar_datos_json(data)
 
-def obtener_relaciones():
-    """Devuelve la lista de relaciones entre tablas."""
-    return cargar_datos_json()["relaciones"]

@@ -10,12 +10,11 @@ def cargar_datos_json():
         return json.load(file)
 
 # Función para guardar datos en el archivo JSON
-
 def guardar_datos_json(data):
     try:
-        with open('diccionario.json', 'w') as f:
+        with open(DATABASE_FILE, 'w') as f:  # Asegúrate de usar DATABASE_FILE
             json.dump(data, f, indent=4)
-        print("Datos guardados correctamente en diccionario.json.")
+        print("Datos guardados correctamente en diccionario.json.")  # Mensaje de depuración
     except Exception as e:
         print("Error al guardar los datos:", e)
 
@@ -48,7 +47,7 @@ def actualizar_registro(nombre_tabla, campos, campo_condicion, valor_condicion):
         raise ValueError(f"La tabla {nombre_tabla} no existe.")
 
     actualizados = 0
-    for registro in tabla['registros']:
+    for registro in tabla.get('registros', []):  # Asegúrate de que 'registros' exista
         if registro.get(campo_condicion) == valor_condicion:
             registro.update(campos)
             actualizados += 1
@@ -64,24 +63,29 @@ def eliminar_registro(nombre_tabla, campo_condicion, valor_condicion):
     if tabla is None:
         raise ValueError(f"La tabla {nombre_tabla} no existe.")
     
-    tabla['registros'] = [r for r in tabla['registros'] if r.get(campo_condicion) != valor_condicion]
+    tabla['registros'] = [r for r in tabla.get('registros', []) if r.get(campo_condicion) != valor_condicion]
     guardar_datos_json(data)
 
 # Función para insertar un nuevo registro en una tabla
 def insertar_registro(nombre_tabla, nuevo_registro):
-    data = cargar_datos_json()  # Carga los datos actuales
-    tabla = next((t for t in data['ejemplos_tablas'] if t['nombre'] == nombre_tabla), None)
+    data = cargar_datos_json()
+    tabla = buscar_tabla(nombre_tabla)
 
-    if tabla is not None:
-        # Asegúrate de que el campo 'registros' exista
-        if 'registross' not in tabla:
-            tabla['registros'] = []
+    if tabla is None:
+        raise ValueError(f"La tabla {nombre_tabla} no existe.")
 
-        # Agrega el nuevo registro
-        tabla['registros'].append(nuevo_registro)
-        guardar_datos_json(data)  # Guarda los cambios en el JSON
-        return True
-    return False
+    # Mensaje de depuración antes de la inserción
+    print("Antes de insertar:", tabla['registros'])
+
+    # Añadir el nuevo registro a la lista de registros de la tabla
+    tabla['registros'].append(nuevo_registro)
+
+    # Mensaje de depuración después de la inserción
+    print("Después de insertar:", tabla['registros'])
+
+    # Guardar los datos actualizados en el JSON
+    guardar_datos_json(data)
+
 
 # ---- Nuevas Funciones para Relaciones ---- #
 
@@ -97,7 +101,7 @@ def agregar_relacion(tabla_origen, columna_origen, tabla_destino, columna_destin
         "tipo_relacion": tipo_relacion
     }
 
-    data["relaciones"].append(nueva_relacion)
+    data.setdefault("relaciones", []).append(nueva_relacion)  # Asegúrate de que 'relaciones' exista
     guardar_datos_json(data)
 
 # Función para obtener todas las relaciones
