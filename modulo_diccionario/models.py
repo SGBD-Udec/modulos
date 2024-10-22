@@ -73,12 +73,6 @@ def incrementar_dml_operations():
     data['estadisticas']['total_dml_operations'] += 1
     guardar_datos_json(data)
 
-<<<<<<< HEAD
-def obtener_relaciones():
-    """Devuelve la lista de relaciones entre tablas."""
-    return cargar_datos_json()["relaciones"]
-
-=======
 def incrementar_ddl_commands():
     """Incrementa el contador de comandos DDL."""
     data = cargar_datos_json()
@@ -89,4 +83,3 @@ def obtener_estadisticas():
     """Devuelve las estadísticas actuales."""
     data = cargar_datos_json()
     return data['estadisticas']
->>>>>>> Pruebaunion

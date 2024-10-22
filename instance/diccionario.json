@@ -37,12 +37,32 @@
                     "id_vendedores": "21321314a"
                 }
             ]
+        },
+        {
+            "id": 3,
+            "nombre": "criko",
+            "descripcion": "criko",
+            "columnas": [
+                {
+                    "nombre": "id_criko",
+                    "tipo": "VARCHAR",
+                    "restricciones": [
+                        "PRIMARY KEY"
+                    ]
+                }
+            ],
+            "registros": [
+                {
+                    "id_criko": "perro312"
+                }
+            ]
         }
     ],
     "relaciones": [],
     "estadisticas": {
-        "total_tablas": 2,
+        "total_tablas": 3,
         "total_dml_operations": 0,
-        "total_ddl_commands": 0
+        "total_ddl_commands": 0,
+        "totalDdlCommands": 1
     }
 }

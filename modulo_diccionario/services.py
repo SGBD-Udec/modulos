@@ -31,12 +31,6 @@ def obtener_estadisticas():
     except FileNotFoundError:
         return {"error": "El archivo JSON no se encontró."}
 
-<<<<<<< HEAD
-# Servicio para obtener todas las relaciones
-def servicio_obtener_relaciones():
-    return obtener_relaciones()
-
-=======
     tables_count = len(data.get('ejemplos_tablas', []))  # Número de tablas
     columns_count = sum(len(table['columnas']) for table in data.get('ejemplos_tablas', []))  # Total de columnas
 
@@ -76,4 +70,3 @@ def actualizar_contadores_ddl():
             json.dump(data, f, indent=4)
     except Exception as e:
         print(f"Error al actualizar contadores DDL: {e}")
->>>>>>> Pruebaunion
