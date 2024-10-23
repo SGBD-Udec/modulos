@@ -8,10 +8,13 @@ from .services import (
     servicio_eliminar_tabla,
     actualizar_contadores_dml,
     actualizar_contadores_ddl,
+    verificar_nombre_tabla_existente,
     obtener_estadisticas
 )
 
+
 modulo_diccionario = Blueprint('modulo_diccionario', __name__)
+
 
 @modulo_diccionario.route('/tablas', methods=['GET'])
 def get_tablas():
@@ -29,7 +32,7 @@ def post_tabla():
         return jsonify({"error": "Ya existe una tabla con ese nombre."}), 400
 
     servicio_agregar_tabla(nombre, descripcion, columnas)
-    servicio_incrementar_ddl()  # Incrementar contadores de comandos DDL
+    actualizar_contadores_ddl()  # Incrementar contadores de comandos DDL
     return jsonify({"message": "Tabla agregada con éxito."}), 201
 
 @modulo_diccionario.route('/tablas/<string:nombre>', methods=['DELETE'])
