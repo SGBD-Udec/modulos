@@ -2,63 +2,67 @@
     "ejemplos_tablas": [
         {
             "id": 1,
-            "nombre": "nuevo",
-            "descripcion": "chanfle",
+            "nombre": "ClientesPro",
+            "descripcion": "Nueva tabla clientes pro",
             "columnas": [
                 {
-                    "nombre": "nuevo",
-                    "tipo": "DECIMAL",
-                    "restricciones": [
-                        "DEFAULT"
-                    ]
-                }
-            ],
-            "registros": []
-        },
-        {
-            "id": 2,
-            "nombre": "nueva",
-            "descripcion": "",
-            "columnas": [
-                {
-                    "nombre": "nuevo",
-                    "tipo": "VARCHAR",
-                    "restricciones": [
-                        "DEFAULT"
-                    ]
-                }
-            ],
-            "registros": []
-        },
-        {
-            "id": 3,
-            "nombre": "clientes",
-            "descripcion": "chanfle",
-            "columnas": [
-                {
-                    "nombre": "clientes",
+                    "nombre": "id_clientes",
                     "tipo": "VARCHAR",
                     "restricciones": [
                         "PRIMARY KEY"
                     ]
+                }
+            ],
+            "registros": [
+                {
+                    "id_clientes": "123123dwada"
                 }
             ]
         },
         {
-            "id": 5,
-            "nombre": "prueba",
-            "descripcion": "chanfle",
+            "id": 2,
+            "nombre": "Vendedores",
+            "descripcion": "Tabla para los vendedores",
             "columnas": [
                 {
-                    "nombre": "alo",
+                    "nombre": "id_vendedores",
                     "tipo": "VARCHAR",
                     "restricciones": [
                         "PRIMARY KEY"
                     ]
                 }
             ],
-            "registros": []
+            "registros": [
+                {
+                    "id_vendedores": "21321314a"
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "nombre": "criko",
+            "descripcion": "criko",
+            "columnas": [
+                {
+                    "nombre": "id_criko",
+                    "tipo": "VARCHAR",
+                    "restricciones": [
+                        "PRIMARY KEY"
+                    ]
+                }
+            ],
+            "registros": [
+                {
+                    "id_criko": "perro312"
+                }
+            ]
         }
     ],
-    "relaciones": []
+    "relaciones": [],
+    "estadisticas": {
+        "total_tablas": 3,
+        "total_dml_operations": 0,
+        "total_ddl_commands": 0,
+        "totalDdlCommands": 1
+    }
 }

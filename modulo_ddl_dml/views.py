@@ -9,8 +9,11 @@ from .models import (
     agregar_relacion, 
     obtener_relaciones,
     eliminar_registro,
-    eliminar_relacion
+    eliminar_relacion,
+    verificar_nombre_tabla_existente
 )
+
+from .services import servicio_modificar_tabla
 
 modulo_ddl_dml = Blueprint('modulo_ddl_dml', __name__)
 
@@ -30,6 +33,20 @@ def obtener_tabla(nombre_tabla):
         return jsonify({"message": "Tabla no encontrada."}), 404
     return jsonify(tabla), 200
 
+@modulo_ddl_dml.route('/api/dml_ddl/tablas/<string:nombre_tabla>/modificar', methods=['PUT'])
+def modificar_tabla_endpoint(nombre_tabla):
+    """Modifica la tabla existente."""
+    nuevos_datos = request.json
+
+    if not nuevos_datos:
+        return jsonify({"message": "Se requieren nuevos datos para modificar la tabla."}), 400
+
+    try:
+        servicio_modificar_tabla(nombre_tabla, nuevos_datos)
+        return jsonify({"message": "Tabla modificada exitosamente."}), 200
+    except Exception as e:
+        return jsonify({"message": f"Error al modificar la tabla: {str(e)}"}), 500
+
 @modulo_ddl_dml.route('/api/dml_ddl/tablas/<string:nombre_tabla>', methods=['DELETE'])
 def eliminar_tabla_endpoint(nombre_tabla):
     """Elimina una tabla por nombre."""
@@ -42,14 +59,19 @@ def eliminar_tabla_endpoint(nombre_tabla):
 def insertar_registro_view(nombre_tabla):
     data = request.get_json()  # Obtén el JSON enviado
     nuevo_registro = data.get('nuevo_registro')  # Obtén el registro del JSON
-    print("Nuevo registro recibido:", nuevo_registro)  # Mensaje de depuración
+
+    # Validar que el nuevo registro no esté vacío
+    if not nuevo_registro:
+        return jsonify({"message": "El registro no puede estar vacío."}), 400
 
     # Llamar a la función de inserción
     try:
         insertar_registro(nombre_tabla, nuevo_registro)
         return jsonify({"message": "Registro insertado exitosamente."}), 201
-    except Exception as e:
+    except ValueError as e:
         return jsonify({"message": str(e)}), 400
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
 
 @modulo_ddl_dml.route('/api/dml_ddl/tablas/<string:nombre_tabla>/actualizar', methods=['PUT'])
 def actualizar_dato(nombre_tabla):
