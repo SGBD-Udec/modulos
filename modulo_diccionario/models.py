@@ -44,7 +44,6 @@ def agregar_tabla(nombre, descripcion, columnas):
     guardar_datos_json(data)
 
     # Actualizar estadísticas
-    data['estadisticas']['total_tablas'] += 1
     guardar_datos_json(data)
 
 def obtener_tablas():
@@ -63,23 +62,6 @@ def eliminar_tabla(nombre):
         return False  # No se encontró la tabla para eliminar
 
     data["ejemplos_tablas"] = nuevas_tablas
-    data['estadisticas']['total_tablas'] -= 1
     guardar_datos_json(data)
     return True
 
-def incrementar_dml_operations():
-    """Incrementa el contador de operaciones DML."""
-    data = cargar_datos_json()
-    data['estadisticas']['total_dml_operations'] += 1
-    guardar_datos_json(data)
-
-def incrementar_ddl_commands():
-    """Incrementa el contador de comandos DDL."""
-    data = cargar_datos_json()
-    data['estadisticas']['total_ddl_commands'] += 1
-    guardar_datos_json(data)
-
-def obtener_estadisticas():
-    """Devuelve las estadísticas actuales."""
-    data = cargar_datos_json()
-    return data['estadisticas']
