@@ -1,28 +1,9 @@
 {
     "ejemplos_tablas": [
         {
-            "id": 1,
-            "nombre": "ClientesPro",
-            "descripcion": "Nueva tabla clientes pro",
-            "columnas": [
-                {
-                    "nombre": "id_clientes",
-                    "tipo": "VARCHAR",
-                    "restricciones": [
-                        "PRIMARY KEY"
-                    ]
-                }
-            ],
-            "registros": [
-                {
-                    "id_clientes": "123123dwada"
-                }
-            ]
-        },
-        {
             "id": 2,
-            "nombre": "Vendedores",
-            "descripcion": "Tabla para los vendedores",
+            "nombre": "Vendedorespro",
+            "descripcion": "Vendedorespro",
             "columnas": [
                 {
                     "nombre": "id_vendedores",
@@ -40,29 +21,57 @@
         },
         {
             "id": 3,
-            "nombre": "criko",
-            "descripcion": "criko",
+            "nombre": "clientespro",
+            "descripcion": "nueva descripcion",
             "columnas": [
                 {
-                    "nombre": "id_criko",
-                    "tipo": "VARCHAR",
+                    "nombre": "id_clientes",
+                    "tipo": "INT",
                     "restricciones": [
                         "PRIMARY KEY"
+                    ]
+                },
+                {
+                    "nombre": "Nombre_Cliente",
+                    "tipo": "VARCHAR",
+                    "restricciones": [
+                        "DEFAULT"
+                    ]
+                },
+                {
+                    "nombre": "Fecha_nacimiento",
+                    "tipo": "DATE",
+                    "restricciones": [
+                        "DEFAULT"
                     ]
                 }
             ],
             "registros": [
                 {
-                    "id_criko": "perro312"
+                    "id_clientes": "1111"
                 }
             ]
+        },
+        {
+            "id": 3,
+            "nombre": "prueba",
+            "descripcion": "prueba",
+            "columnas": [
+                {
+                    "nombre": "id_prueba",
+                    "tipo": "INT",
+                    "restricciones": [
+                        "PRIMARY KEY"
+                    ]
+                }
+            ],
+            "registros": []
         }
     ],
     "relaciones": [],
     "estadisticas": {
         "total_tablas": 3,
-        "total_dml_operations": 0,
-        "total_ddl_commands": 0,
+        "totalDmlOperations": 0,
         "totalDdlCommands": 1
     }
 }

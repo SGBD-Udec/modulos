@@ -6,10 +6,7 @@ from .services import (
     servicio_agregar_tabla,
     servicio_obtener_tablas,
     servicio_eliminar_tabla,
-    actualizar_contadores_dml,
-    actualizar_contadores_ddl,
-    verificar_nombre_tabla_existente,
-    obtener_estadisticas
+    verificar_nombre_tabla_existente
 )
 
 
@@ -32,6 +29,7 @@ def post_tabla():
         return jsonify({"error": "Ya existe una tabla con ese nombre."}), 400
 
     servicio_agregar_tabla(nombre, descripcion, columnas)
+    actualizar_contadores_dml()
     actualizar_contadores_ddl()  # Incrementar contadores de comandos DDL
     return jsonify({"message": "Tabla agregada con éxito."}), 201
 
@@ -42,8 +40,3 @@ def delete_tabla(nombre):
         return jsonify({"message": "Tabla eliminada con éxito."}), 200
     else:
         return jsonify({"error": "Tabla no encontrada."}), 404
-
-@modulo_diccionario.route('/estadisticas', methods=['GET'])
-def get_estadisticas():
-    estadisticas = obtener_estadisticas()  
-    return jsonify(estadisticas)
