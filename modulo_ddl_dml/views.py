@@ -10,6 +10,8 @@ from .models import (
     obtener_relaciones,
     eliminar_registro,
     eliminar_relacion,
+    is_primary_key,
+    obtener_estadisticas,
     verificar_nombre_tabla_existente
 )
 
@@ -99,11 +101,14 @@ def eliminar_dato(nombre_tabla):
         return jsonify({"message": "El campo de condición y el valor de condición son requeridos."}), 400
 
     try:
+        print(f"Intentando eliminar de la tabla '{nombre_tabla}' donde {campo_condicion} = {valor_condicion}.")
         eliminar_registro(nombre_tabla, campo_condicion, valor_condicion)
         return jsonify({"message": "Registro(s) eliminado(s) exitosamente."}), 200
     except ValueError as e:
+        print(f"Error de valor: {str(e)}")  # Para depuración
         return jsonify({"message": str(e)}), 400
     except Exception as e:
+        print(f"Error inesperado: {str(e)}")  # Para depuración
         return jsonify({"message": str(e)}), 500
 
 # Rutas para Relaciones
@@ -149,3 +154,14 @@ def eliminar_relacion_endpoint():
         return jsonify({"message": "Relación eliminada exitosamente."}), 204
     except Exception as e:
         return jsonify({"message": str(e)}), 500
+
+@modulo_ddl_dml.route('/api/dml_ddl/estadisticas', methods=['GET'])
+def obtener_estadisticas():
+    data = cargar_datos_json()  # Asegúrate de que esta función carga el JSON correctamente
+    return jsonify({
+        "estadisticas": {
+            "total_tablas": len(data.get("ejemplos_tablas", [])),  # Cuenta las tablas
+            "total_dml_operations": data.get("estadisticas", {}).get("total_dml_operations", 0),
+            "total_ddl_commands": data.get("estadisticas", {}).get("total_ddl_commands", 0),
+        }
+    })
