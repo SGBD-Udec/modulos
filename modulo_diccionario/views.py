@@ -29,8 +29,6 @@ def post_tabla():
         return jsonify({"error": "Ya existe una tabla con ese nombre."}), 400
 
     servicio_agregar_tabla(nombre, descripcion, columnas)
-    actualizar_contadores_dml()
-    actualizar_contadores_ddl()  # Incrementar contadores de comandos DDL
     return jsonify({"message": "Tabla agregada con éxito."}), 201
 
 @modulo_diccionario.route('/tablas/<string:nombre>', methods=['DELETE'])
