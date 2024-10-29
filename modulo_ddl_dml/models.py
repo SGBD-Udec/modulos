@@ -3,7 +3,7 @@ import json
 # Ruta del archivo JSON
 DATABASE_FILE = 'instance/diccionario.json'
 
-# Manejo del Json
+# Manejo del JSON
 
 # Función para leer el archivo JSON
 def cargar_datos_json():
@@ -15,7 +15,7 @@ def guardar_datos_json(data):
     try:
         with open(DATABASE_FILE, 'w') as f:
             json.dump(data, f, indent=4)
-        print("Datos guardados correctamente en diccionario.json.")  # Mensaje de depuración
+        print("Datos guardados correctamente en diccionario.json.")
     except Exception as e:
         print("Error al guardar los datos:", e)
 
@@ -38,7 +38,7 @@ def actualizar_registro(nombre_tabla, campos, campo_condicion, valor_condicion):
     guardar_datos_json(data)
 
     # Actualizar estadísticas DML
-    data['estadisticas']['totalDmlOperations'] += 1
+    data['estadisticas']['total_dml_operations'] += 1
     guardar_datos_json(data)
 
     return actualizados
@@ -63,7 +63,7 @@ def eliminar_registro(nombre_tabla, campo_condicion, valor_condicion):
     guardar_datos_json(data)
 
     # Actualizar estadísticas DML
-    data['estadisticas']['totalDmlOperations'] += 1
+    data['estadisticas']['total_dml_operations'] += 1
     guardar_datos_json(data)
 
 def is_primary_key(tabla, campo_condicion, valor):
@@ -88,7 +88,7 @@ def insertar_registro(nombre_tabla, nuevo_registro):
     guardar_datos_json(data)
 
     # Actualizar estadísticas DML
-    data['estadisticas']['totalDmlOperations'] += 1
+    data['estadisticas']['total_dml_operations'] += 1
     guardar_datos_json(data)
 
     return {"message": "Registro insertado exitosamente."}
@@ -110,7 +110,7 @@ def eliminar_tabla(nombre_tabla):
             del data['ejemplos_tablas'][i]
             guardar_datos_json(data)
             # Actualizar estadísticas DDL
-            data['estadisticas']['totalDdlCommands'] += 1
+            data['estadisticas']['total_ddl_commands'] += 1
             guardar_datos_json(data)
             return True    
     return False
@@ -139,7 +139,7 @@ def modificar_tabla(nombre_tabla_actual, nuevos_datos):
     guardar_datos_json(data)
 
     # Actualizar estadísticas DDL
-    data['estadisticas']['totalDdlCommands'] += 1
+    data['estadisticas']['total_ddl_commands'] += 1
     guardar_datos_json(data)
 
 def verificar_nombre_tabla_existente(nombre):
@@ -160,10 +160,6 @@ def agregar_relacion(tabla_origen, columna_origen, tabla_destino, columna_destin
     data.setdefault("relaciones", []).append(nueva_relacion)
     guardar_datos_json(data)
 
-    # Actualizar estadísticas DDL
-    data['estadisticas']['totalDdlCommands'] += 1
-    guardar_datos_json(data)
-
 # Función para obtener todas las relaciones
 def obtener_relaciones():
     data = cargar_datos_json()
@@ -178,12 +174,9 @@ def eliminar_relacion(tabla_origen, tabla_destino):
     
     data["relaciones"] = relaciones_filtradas
     guardar_datos_json(data)
-
-    # Actualizar estadísticas DDL
-    data['estadisticas']['totalDdlCommands'] += 1
-    guardar_datos_json(data)
     return True
 
+# Función para obtener estadísticas
 def obtener_estadisticas():
     data = cargar_datos_json()
     return data.get('estadisticas', {})
