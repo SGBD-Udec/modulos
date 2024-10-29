@@ -7,7 +7,6 @@ def servicio_agregar_tabla(nombre, descripcion, columnas):
     if verificar_nombre_tabla_existente(nombre):
         return False  # Nombre ya existe, no se puede agregar
     agregar_tabla(nombre, descripcion, columnas)
-    actualizar_contadores_ddl()  # Actualiza el contador de comandos DDL
     return True  # Se agregó con éxito
 
 def verificar_nombre_tabla_existente(nombre):
@@ -21,7 +20,7 @@ def servicio_obtener_tablas():
 # Servicio para eliminar una tabla
 def servicio_eliminar_tabla(nombre):
     eliminar_tabla(nombre)
-    actualizar_contadores_dml()  # Actualiza el contador de operaciones DML
+
 
 
 
