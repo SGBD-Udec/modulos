@@ -108,49 +108,6 @@ def eliminar_dato(nombre_tabla):
         print(f"Error inesperado: {str(e)}")  # Para depuración
         return jsonify({"message": str(e)}), 500
 
-# Rutas para Relaciones
-
-@modulo_ddl_dml.route('/api/dml_ddl/relaciones', methods=['GET'])
-def obtener_relaciones_endpoint():
-    """Obtiene todas las relaciones."""
-    relaciones = obtener_relaciones()
-    return jsonify(relaciones), 200
-
-@modulo_ddl_dml.route('/api/dml_ddl/relaciones', methods=['POST'])
-def agregar_nueva_relacion():
-    """Crea una nueva relación entre tablas."""
-    data = request.json
-    tabla_origen = data.get('tabla_origen')
-    columna_origen = data.get('columna_origen')
-    tabla_destino = data.get('tabla_destino')
-    columna_destino = data.get('columna_destino')
-    tipo_relacion = data.get('tipo_relacion')
-
-    # Validación básica
-    if not all([tabla_origen, columna_origen, tabla_destino, columna_destino, tipo_relacion]):
-        return jsonify({"message": "Todos los campos son requeridos."}), 400
-
-    try:
-        agregar_relacion(tabla_origen, columna_origen, tabla_destino, columna_destino, tipo_relacion)
-        return jsonify({"message": "Relación creada exitosamente."}), 201
-    except Exception as e:
-        return jsonify({"message": str(e)}), 500
-
-@modulo_ddl_dml.route('/api/dml_ddl/relaciones', methods=['DELETE'])
-def eliminar_relacion_endpoint():
-    """Elimina una relación entre tablas."""
-    data = request.json
-    tabla_origen = data.get('tabla_origen')
-    tabla_destino = data.get('tabla_destino')
-
-    if not tabla_origen or not tabla_destino:
-        return jsonify({"message": "Tabla origen y destino son requeridas."}), 400
-
-    try:
-        eliminar_relacion(tabla_origen, tabla_destino)
-        return jsonify({"message": "Relación eliminada exitosamente."}), 204
-    except Exception as e:
-        return jsonify({"message": str(e)}), 500
 
 @modulo_ddl_dml.route('/api/dml_ddl/estadisticas', methods=['GET'])
 def obtener_estadisticas():
