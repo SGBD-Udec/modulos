@@ -4,3 +4,11 @@ python -m venv venv   Crear entorno py
 pip install -r requirements.txt
 pip install flask-cors
 npm install axios  
+
+Comando bash subir
+git add .
+git commit -m "mensaje que quiera"
+git origin push "rama en la que esta"
+
+COmando actualizar 
+git pull origin "rama en la que esta y quiere jalar lo que hay en github"
