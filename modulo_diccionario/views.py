@@ -13,8 +13,8 @@ from .services import (
 )
 from .models import cargar_datos_json
 
-modulo_diccionario = Blueprint('modulo_diccionario', _name_)
-
+# Corrección aquí
+modulo_diccionario = Blueprint('modulo_diccionario', __name__)
 
 @modulo_diccionario.route('/tablas', methods=['GET'])
 def get_tablas():
@@ -39,7 +39,6 @@ def post_tabla():
 
     servicio_agregar_tabla(nombre, descripcion, columnas)
     return jsonify({"message": "Tabla agregada con éxito."}), 201
-
 
 @modulo_diccionario.route('/estadisticas', methods=['GET'])
 def get_estadisticas():

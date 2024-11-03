@@ -6,10 +6,7 @@ from .models import (
     cargar_datos_json, 
     actualizar_registro, 
     insertar_registro, 
-    agregar_relacion, 
-    obtener_relaciones,
     eliminar_registro,
-    eliminar_relacion,
     is_primary_key,
     obtener_estadisticas,
     verificar_nombre_tabla_existente
