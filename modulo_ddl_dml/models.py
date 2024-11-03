@@ -146,36 +146,6 @@ def verificar_nombre_tabla_existente(nombre):
     data = cargar_datos_json()
     return any(tabla['nombre'] == nombre for tabla in data['ejemplos_tablas'])
 
-# Función para agregar una relación
-def agregar_relacion(tabla_origen, columna_origen, tabla_destino, columna_destino, tipo_relacion):
-    data = cargar_datos_json()
-    nueva_relacion = {
-        "tabla_origen": tabla_origen,
-        "columna_origen": columna_origen,
-        "tabla_destino": tabla_destino,
-        "columna_destino": columna_destino,
-        "tipo_relacion": tipo_relacion
-    }
-
-    data.setdefault("relaciones", []).append(nueva_relacion)
-    guardar_datos_json(data)
-
-# Función para obtener todas las relaciones
-def obtener_relaciones():
-    data = cargar_datos_json()
-    return data.get("relaciones", [])
-
-# Función para eliminar una relación
-def eliminar_relacion(tabla_origen, tabla_destino):
-    data = cargar_datos_json()
-    relaciones = data.get("relaciones", [])
-    
-    relaciones_filtradas = [r for r in relaciones if not (r["tabla_origen"] == tabla_origen and r["tabla_destino"] == tabla_destino)]
-    
-    data["relaciones"] = relaciones_filtradas
-    guardar_datos_json(data)
-    return True
-
 # Función para obtener estadísticas
 def obtener_estadisticas():
     data = cargar_datos_json()

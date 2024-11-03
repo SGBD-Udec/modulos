@@ -160,7 +160,6 @@ def obtener_estadisticas():
     data = cargar_datos_json()  # Asegúrate de que esta función carga el JSON correctamente
     return jsonify({
         "estadisticas": {
-            "total_tablas": len(data.get("ejemplos_tablas", [])),  # Cuenta las tablas
             "total_dml_operations": data.get("estadisticas", {}).get("total_dml_operations", 0),
             "total_ddl_commands": data.get("estadisticas", {}).get("total_ddl_commands", 0),
         }

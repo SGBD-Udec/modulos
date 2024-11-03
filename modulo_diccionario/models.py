@@ -1,3 +1,4 @@
+# modulo_diccionario/models.py
 import json
 import os
 
@@ -12,13 +13,16 @@ def cargar_datos_json():
             "relaciones": [],
             "estadisticas": {
                 "total_tablas": 0,
-                "total_dml_operations": 0,
-                "total_ddl_commands": 0
+
             }
         }
     
     with open(JSON_FILE_PATH, 'r') as file:
         return json.load(file)
+
+        # Actualizar el conteo de tablas en "estadisticas"
+    data["estadisticas"]["total_tablas"] = len(data.get("ejemplos_tablas", []))
+    return data
 
 def guardar_datos_json(data):
     """Guarda datos en el archivo JSON."""
@@ -41,27 +45,65 @@ def agregar_tabla(nombre, descripcion, columnas):
         'registros': []  # Inicializar la clave 'registros' como una lista vacía
     }
     data["ejemplos_tablas"].append(nueva_tabla)
-    guardar_datos_json(data)
 
-    # Actualizar estadísticas
+    # Actualizar estadísticas al agregar una nueva tabla
+    data["estadisticas"]["total_tablas"] += 1
+
     guardar_datos_json(data)
 
 def obtener_tablas():
     """Devuelve la lista de tablas con columnas."""
     return cargar_datos_json()["ejemplos_tablas"]
 
-def eliminar_tabla(nombre):
-    """Elimina una tabla del archivo JSON."""
+def obtener_columnas_de_tabla(nombre_tabla):
+    """Devuelve las columnas de una tabla específica."""
+    tablas = obtener_tablas()
+    for tabla in tablas:
+        if tabla['nombre'] == nombre_tabla:
+            return tabla.get('columnas', [])
+    return []
+
+
+def agregar_relacion(tabla_origen, columna_origen, tabla_destino, columna_destino, tipo_relacion):
     data = cargar_datos_json()
-    tablas = data["ejemplos_tablas"]
-    
-    # Filtrar la tabla que se desea eliminar
-    nuevas_tablas = [tabla for tabla in tablas if tabla["nombre"] != nombre]
-    
-    if len(tablas) == len(nuevas_tablas):
-        return False  # No se encontró la tabla para eliminar
+    nueva_relacion = {
+        "tabla_origen": tabla_origen,
+        "columna_origen": columna_origen,
+        "tabla_destino": tabla_destino,
+        "columna_destino": columna_destino,
+        "tipo_relacion": tipo_relacion
+    }
 
-    data["ejemplos_tablas"] = nuevas_tablas
-    guardar_datos_json(data)
-    return True
+    # Asegúrate de que 'relaciones' esté inicializado
+    if "relaciones" not in data:
+        data["relaciones"] = []
 
+    data["relaciones"].append(nueva_relacion)
+
+    # Intenta guardar los datos, maneja la excepción
+    try:
+        guardar_datos_json(data)
+    except Exception as e:
+        print(f"Error al guardar la relación: {e}")
+        raise  # Vuelve a lanzar la excepción para que sea manejada en el endpoint
+
+# Función para obtener todas las relaciones
+def obtener_relaciones():
+    data = cargar_datos_json()
+    return data.get("relaciones", [])
+
+# Función para eliminar una relación
+def eliminar_relacion(tabla_origen, tabla_destino):
+    try:
+        data = cargar_datos_json()
+        relaciones = data.get("relaciones", [])
+        
+        # Filtrar las relaciones que no coincidan con los parámetros dados
+        relaciones_filtradas = [r for r in relaciones if not (r["tabla_origen"] == tabla_origen and r["tabla_destino"] == tabla_destino)]
+        
+        data["relaciones"] = relaciones_filtradas  # Actualiza las relaciones en el JSON
+        guardar_datos_json(data)  # Guarda los cambios
+        return True
+    except Exception as e:
+        print(f"Error al eliminar relación: {e}")
+        raise  # Vuelve a lanzar la excepción para que sea manejada en el endpoint
